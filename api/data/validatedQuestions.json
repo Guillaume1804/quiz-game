@@ -1,0 +1,65 @@
+[
+  {
+    "citation": "Ils ont les armes, on les emmerde !",
+    "choices": [
+      {
+        "text": "La Haine",
+        "isCorrect": true
+      },
+      {
+        "text": "Le Cercle des poètes disparus",
+        "isCorrect": false
+      },
+      {
+        "text": "Léon",
+        "isCorrect": false
+      },
+      {
+        "text": "Les Misérables",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "citation": "Houston, on a un problème.",
+    "choices": [
+      {
+        "text": "Apollo 13",
+        "isCorrect": true
+      },
+      {
+        "text": "Interstellar",
+        "isCorrect": false
+      },
+      {
+        "text": "Gravity",
+        "isCorrect": false
+      },
+      {
+        "text": "Seul sur Mars",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "citation": "Hasta la vista, baby.",
+    "choices": [
+      {
+        "text": "Terminator 2 : Le Jugement dernier",
+        "isCorrect": true
+      },
+      {
+        "text": "RoboCop",
+        "isCorrect": false
+      },
+      {
+        "text": "Total Recall",
+        "isCorrect": false
+      },
+      {
+        "text": "Predator",
+        "isCorrect": false
+      }
+    ]
+  }
+]

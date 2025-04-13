@@ -1,0 +1,26 @@
+# ✅ BACKEND (api)
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dépendances
+node_modules/
+
+# Environnement
+.env
+.env.*
+
+# Fichiers de données sensibles ou générés
+/data/users.json
+/data/scores.json
+/data/reportedQuestions.json
+/data/generatedQuestions.json
+/data/pendingQuestions.json
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
