@@ -7,6 +7,8 @@ const path = require("path");
 const authRoutes = require("./authRoutes");
 const scoreRoutes = require("./scoreRoutes");
 const verifyToken = require("./authMiddleware");
+const adminRoutes = require("./adminRoutes");
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,8 +18,10 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/score", scoreRoutes);
+app.use("/api/admin", adminRoutes);
 
-const QUESTIONS_PATH = path.join(__dirname, "data", "generatedQuestions.json");
+
+const QUESTIONS_PATH = path.join(__dirname, "data", "cleanedQuestions.json");
 const REPORTED_PATH = path.join(__dirname, "data", "reportedQuestions.json");
 const USERS_PATH = path.join(__dirname, "data", "users.json");
 

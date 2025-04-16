@@ -1,94 +1,105 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../hooks/useUser";
 
-export default function LoginRegister() {
-  const [mode, setMode] = useState("login"); // "register" ou "login"
-  const [email, setEmail] = useState("");
-  const [pseudo, setPseudo] = useState("");
-  const [password, setPassword] = useState("");
-  const { user, login } = useUser();
-  const navigate = useNavigate();
+function generateGuestName() {
+  const id = Math.floor(1000 + Math.random() * 9000);
+  return `invité_${id}`;
+}
 
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+export default function LoginRegister() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState("login"); // login | register
+  const [error, setError] = useState(null);
+  const { login } = useUser();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = mode === "register" ? "/register" : "/login";
-    const payload =
-  mode === "register"
-    ? { email, username: pseudo, password }
-    : { email, password };
+    setError(null);
 
     try {
-      const res = await axios.post(
-        `http://localhost:3001/api${endpoint}`,
-        payload
-      );
-      login(res.data.token); // met à jour le contexte + localStorage
-      navigate("/"); // redirige vers l'accueil
+      const res = await axios.post(`http://localhost:3001/api/auth/${mode}`, {
+        username,
+        password,
+      });
+      login(res.data.token);
+      navigate("/");
     } catch (err) {
-      alert("Erreur : " + err.response?.data?.error || err.message);
+      setError(err.response?.data?.error || "Erreur inconnue");
     }
   };
 
+  const handleGuest = () => {
+    const guestName = generateGuestName();
+    localStorage.setItem("guestName", guestName);
+  
+    // ✅ met à jour le contexte avec un pseudo user invité (optionnel mais propre)
+    login(null); // <- si besoin, tu peux étendre cette fonction pour gérer le mode invité
+  
+    // ✅ Redirige proprement vers /quiz
+    navigate("/quiz");
+  };
+  
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-xl font-bold mb-4">
-          {mode === "login" ? "Connexion" : "Inscription"}
-        </h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-6">
+      <h1 className="text-3xl mb-6">
+        {mode === "login" ? "Connexion" : "Inscription"}
+      </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            required
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border px-3 py-2 rounded"
-          />
-          {mode === "register" && (
-            <input
-              type="text"
-              required
-              placeholder="Pseudo"
-              value={pseudo}
-              onChange={(e) => setPseudo(e.target.value)}
-              className="border px-3 py-2 rounded"
-            />
-          )}
-          <input
-            type="password"
-            required
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border px-3 py-2 rounded"
-          />
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 w-full max-w-sm"
+      >
+        <input
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Nom d'utilisateur"
+          autoComplete="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="p-2 rounded text-black"
+          required
+        />
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Mot de passe"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="p-2 rounded text-black"
+          required
+        />
+        <button type="submit" className="bg-blue-500 px-4 py-2 rounded">
+          {mode === "login" ? "Se connecter" : "Créer un compte"}
+        </button>
+        <button
+          type="button"
+          className="bg-gray-600 px-4 py-2 rounded"
+          onClick={handleGuest}
+        >
+          🎮 Jouer en tant qu'invité
+        </button>
+        <p className="text-sm text-center">
+          {mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
           <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            {mode === "login" ? "Se connecter" : "S'inscrire"}
-          </button>
-        </form>
-
-        <p className="mt-4 text-sm text-center">
-          {mode === "login" ? "Pas encore de compte ?" : "Déjà inscrit ?"}{" "}
-          <button
-            className="text-blue-600 underline"
+            type="button"
+            className="text-blue-300 underline"
             onClick={() => setMode(mode === "login" ? "register" : "login")}
           >
             {mode === "login" ? "Créer un compte" : "Se connecter"}
           </button>
         </p>
-      </div>
+        {error && (
+          <p className="text-red-400 mt-2 text-sm text-center">{error}</p>
+        )}
+      </form>
     </div>
   );
 }

@@ -14,11 +14,12 @@ export default function Navbar() {
 
       {user ? (
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-300">Bonjour, {user.pseudo}</span>
+          <span className="text-sm text-gray-300">Bonjour, {user.username}</span>
           <button
             onClick={() => {
               logout();
-              navigate("/auth");
+              localStorage.removeItem("guestName");
+              navigate("/login");
             }}
             className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
           >
@@ -27,7 +28,7 @@ export default function Navbar() {
         </div>
       ) : (
         <Link
-          to="/auth"
+          to="/login"
           className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
         >
           Connexion

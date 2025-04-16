@@ -1,11 +1,12 @@
+// ✅ Quiz.jsx - corrigé pour les invités
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Score from "../components/Score";
 import Lives from "../components/Lives";
 import QuestionBox from "../components/QuestionBox";
-import { get as levenshtein } from "fast-levenshtein";
 import { useUser } from "../hooks/useUser";
+import { isFreeAnswerCorrect } from "../utils/compareTitles";
 
 function shuffleArray(array) {
   return [...array].sort(() => Math.random() - 0.5);
@@ -59,7 +60,8 @@ export default function Quiz() {
   }, [usedCitations]);
 
   useEffect(() => {
-    if (!user) {
+    const guestName = localStorage.getItem("guestName");
+    if (!user && !guestName) {
       navigate("/login");
       return;
     }
@@ -70,36 +72,46 @@ export default function Quiz() {
   }, [fetchQuestion, user, navigate]);
 
   const endTurn = async (isCorrect) => {
+    const guestName = localStorage.getItem("guestName");
+    const token = localStorage.getItem("token");
+    const username = user?.username || guestName || "invité_inconnu";
+  
     if (!isCorrect && lives - 1 <= 0) {
       alert(`Fin du jeu ! Score final : ${score}`);
-
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          await axios.post(
-            "http://localhost:3001/api/score",
-            { score },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-        } catch (err) {
-          console.error("Erreur enregistrement score :", err.message);
-        }
+  
+      try {
+        await axios.post(
+          "http://localhost:3001/api/score",
+          { score, username },
+          {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+          }
+        );
+      } catch (err) {
+        console.error("Erreur enregistrement score :", err.message);
       }
-
-      navigate("/");
+  
+      if (guestName) {
+        localStorage.removeItem("guestName");
+        navigate("/login");
+      } else {
+        navigate("/");
+      }
     } else {
       setFeedback(null);
       fetchQuestion();
     }
   };
-
-  const handleAnswer = (choice, points) => {
+  
+  const handleAnswer = async (choice, points) => {
     const isCorrect = choice.isCorrect;
-    setFeedback(isCorrect ? "Bravo !" : "Dommage...");
+    const correctAnswer = question.choices.all.find((c) => c.isCorrect)?.text;
+
+    setFeedback(
+      isCorrect ? "Bravo !" : `❌ Mauvaise réponse ! C'était : ${correctAnswer}`
+    );
 
     if (isCorrect) {
       setScore((prev) => prev + points);
@@ -109,23 +121,18 @@ export default function Quiz() {
 
     setTimeout(() => {
       endTurn(isCorrect);
-    }, 1000);
+    }, 2000);
   };
 
-  const handleFreeAnswer = (userInput) => {
+  const handleFreeAnswer = async (userInput) => {
     const correctAnswer = question.choices.all.find((c) => c.isCorrect)?.text;
     if (!correctAnswer) return;
 
-    const userClean = userInput.trim().toLowerCase();
-    const correctClean = correctAnswer.trim().toLowerCase();
+    const isCorrect = isFreeAnswerCorrect(userInput, correctAnswer);
 
-    const distance = levenshtein(userClean, correctClean);
-    const similarity =
-      1 - distance / Math.max(userClean.length, correctClean.length);
-
-    const isCorrect = similarity >= 0.7;
-
-    setFeedback(isCorrect ? "Bravo !" : "Dommage...");
+    setFeedback(
+      isCorrect ? "Bravo !" : `❌ Mauvaise réponse ! C'était : ${correctAnswer}`
+    );
 
     if (isCorrect) {
       setScore((prev) => prev + 5);
@@ -135,7 +142,7 @@ export default function Quiz() {
 
     setTimeout(() => {
       endTurn(isCorrect);
-    }, 1000);
+    }, 2000);
   };
 
   const handleReport = async () => {

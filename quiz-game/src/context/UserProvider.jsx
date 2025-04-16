@@ -1,5 +1,6 @@
+// ✅ UserProvider.jsx
 import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode"; // ✅ CORRECT
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { UserContext } from "./UserContext";
 

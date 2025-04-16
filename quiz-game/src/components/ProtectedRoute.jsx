@@ -1,13 +1,23 @@
-// components/ProtectedRoute.jsx
-import { Navigate } from "react-router-dom";
+// ✅ ProtectedRoute.jsx
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, allowGuest = false }) {
   const { user } = useUser();
+  const navigate = useNavigate();
 
-  if (!user) {
-    return <Navigate to="/auth" replace />;
+  useEffect(() => {
+    const guest = localStorage.getItem("guestName");
+    if (!user && !guest && !allowGuest) {
+      navigate("/login");
+    }
+  }, [user, allowGuest, navigate]);
+
+  const guest = localStorage.getItem("guestName");
+  if (user || (allowGuest && guest)) {
+    return children;
   }
 
-  return children;
+  return null;
 }

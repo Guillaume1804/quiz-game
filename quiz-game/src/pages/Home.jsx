@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useUser } from "../hooks/useUser";
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
+  const { user } = useUser();
+  const guestName = localStorage.getItem("guestName");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user && !guestName) {
+      navigate("/login");
+    }
+  }, [user, guestName, navigate]);
 
   useEffect(() => {
     async function fetchScores() {
@@ -25,10 +35,12 @@ export default function Home() {
     return `${index + 1}.`;
   };
 
+  const username = user?.username || guestName;
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center gap-8 p-4">
       <h1 className="text-4xl font-bold text-center">
-        🎬 Bienvenue dans le Quiz Cinéma
+        🎬 Bienvenue {username || "utilisateur"} dans le Quiz Cinéma
       </h1>
 
       <div className="flex gap-4">
@@ -38,12 +50,14 @@ export default function Home() {
         >
           🎮 Lancer une partie
         </Link>
-        <Link
-          to="/admin"
-          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
-        >
-          ⚙️ Interface Admin
-        </Link>
+        {user?.username === "Guillaume" && (
+          <Link
+            to="/admin"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
+          >
+            ⚙️ Interface Admin
+          </Link>
+        )}
       </div>
 
       <div className="mt-10 w-full max-w-xl">
@@ -62,7 +76,9 @@ export default function Home() {
                 className="p-2 px-4 flex justify-between font-medium"
               >
                 <span>
-                  {getMedal(index)} {entry.username}
+                  {getMedal(index)}{" "}
+                  {entry.username.startsWith("invité_") ? "👤" : "🧑‍💻"}{" "}
+                  {entry.username}
                 </span>
                 <span>{entry.score} pts</span>
               </li>
