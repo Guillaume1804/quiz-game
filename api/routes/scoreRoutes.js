@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
-const verifyToken = require("./authMiddleware");
+const verifyToken = require("../middleware/authMiddleware");
 
 const SCORES_PATH = path.join(__dirname, "data", "scores.json");
 

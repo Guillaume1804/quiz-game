@@ -4,10 +4,10 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
-const authRoutes = require("./authRoutes");
-const scoreRoutes = require("./scoreRoutes");
-const verifyToken = require("./authMiddleware");
-const adminRoutes = require("./adminRoutes");
+const authRoutes = require("./routes/authRoutes");
+const scoreRoutes = require("./routes/scoreRoutes");
+const verifyToken = require("./middleware/authMiddleware");
+const adminRoutes = require("./routes/adminRoutes");
 
 
 const app = express();
