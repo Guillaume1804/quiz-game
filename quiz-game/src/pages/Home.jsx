@@ -50,7 +50,7 @@ export default function Home() {
         >
           🎮 Lancer une partie
         </Link>
-        {user?.username === "Guillaume" && (
+        {user?.role === "admin" && (
           <Link
             to="/admin"
             className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
@@ -76,9 +76,8 @@ export default function Home() {
                 className="p-2 px-4 flex justify-between font-medium"
               >
                 <span>
-                  {getMedal(index)}{" "}
-                  {entry.username.startsWith("invité_") ? "👤" : "🧑‍💻"}{" "}
-                  {entry.username}
+                  {getMedal(index)} {entry.username ? "🧑‍💻" : "👤"}{" "}
+                  {entry.username || "Anonyme"}
                 </span>
                 <span>{entry.score} pts</span>
               </li>

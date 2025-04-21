@@ -1,15 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import AddQuestionForm from "../components/AddQuestionForm";
+import { useUser } from "../hooks/useUser";
 
 export default function Admin() {
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(null);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState(null);
+  const { token, user } = useUser();
 
   const fetchQuestions = useCallback(async () => {
+    if (!token || user?.role !== "admin") return;
     try {
       const url =
         filter === "reported"
@@ -17,23 +20,26 @@ export default function Admin() {
           : "http://localhost:3001/api/admin/questions";
 
       const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
         params: filter === "all" ? { q: search } : undefined,
       });
       setQuestions(res.data);
     } catch (err) {
-      console.error("Erreur chargement questions:", err);
+      console.error("❌ Erreur chargement questions:", err);
+      setQuestions([]);
     }
-  }, [search, filter]);
+  }, [search, filter, token, user]);
 
   useEffect(() => {
     fetchQuestions();
-  }, [fetchQuestions]);
+  }, [fetchQuestions, user]);
 
-  const handleDelete = async (citation) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Supprimer cette question ?")) return;
     try {
       await axios.delete("http://localhost:3001/api/admin/deleteQuestion", {
-        data: { citation },
+        data: { id },
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchQuestions();
     } catch (err) {
@@ -41,11 +47,13 @@ export default function Admin() {
     }
   };
 
-  const handleUnreport = async (citation) => {
+  const handleUnreport = async (question_id) => {
     try {
-      await axios.post("http://localhost:3001/api/admin/unreport", {
-        citation,
-      });
+      await axios.post(
+        "http://localhost:3001/api/admin/unreport",
+        { question_id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       fetchQuestions();
     } catch (err) {
       console.error("Erreur désignalement:", err);
@@ -54,7 +62,7 @@ export default function Admin() {
 
   const handleEdit = (index) => {
     setEditIndex(index);
-    setEditData({ ...questions[index] }); // copie profonde simple
+    setEditData({ ...questions[index] });
   };
 
   const handleEditChange = (field, value) => {
@@ -63,34 +71,51 @@ export default function Admin() {
 
   const handleChoiceChange = (i, field, value) => {
     const updatedChoices = [...editData.choices];
-    updatedChoices[i][field] = field === "isCorrect" ? value : value;
+    updatedChoices[i][field] = value;
     setEditData({ ...editData, choices: updatedChoices });
   };
 
   const handleUpdate = async () => {
     try {
-      await axios.put("http://localhost:3001/api/admin/updateQuestion", {
-        originalCitation: questions[editIndex].citation,
-        updatedQuestion: editData,
-      });
+      await axios.put(
+        "http://localhost:3001/api/admin/updateQuestion",
+        {
+          id: questions[editIndex].id,
+          citation: editData.citation,
+          choices: editData.choices,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setEditIndex(null);
       setEditData(null);
       fetchQuestions();
     } catch (err) {
       console.error("Erreur mise à jour:", err);
+      alert(
+        err.response?.data?.error || "Erreur serveur lors de la mise à jour."
+      );
     }
   };
 
-  const filtered = questions;
+  if (!user || user.role !== "admin") {
+    return (
+      <p className="text-center p-6 text-red-600">
+        Accès restreint aux administrateurs.
+      </p>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Admin - Gestion des questions</h1>
         <button
-          onClick={() =>
-            setFilter(filter === "all" ? "reported" : "all")
-          }
+          onClick={() => setFilter(filter === "all" ? "reported" : "all")}
           className="bg-yellow-500 text-white px-3 py-1 rounded"
         >
           {filter === "all" ? "📛 Voir signalées" : "👁 Voir toutes"}
@@ -109,12 +134,14 @@ export default function Admin() {
 
       <AddQuestionForm onQuestionAdded={fetchQuestions} />
 
-      {filtered.length === 0 ? (
-        <p className="text-gray-500 text-center">Aucune question trouvée.</p>
+      {questions === null ? (
+        <p className="text-center text-gray-500">Chargement des questions...</p>
+      ) : questions.length === 0 ? (
+        <p className="text-center text-gray-500">Aucune question trouvée.</p>
       ) : (
         <div className="grid gap-6">
-          {filtered.map((q, i) => (
-            <div key={i} className="bg-white shadow p-4 rounded">
+          {questions.map((q, i) => (
+            <div key={q.id || i} className="bg-white shadow p-4 rounded">
               {editIndex === i ? (
                 <>
                   <input
@@ -191,20 +218,21 @@ export default function Admin() {
                     >
                       ✏️ Modifier
                     </button>
-                    {filter === "reported" && (
+                    {filter === "reported" && q.question_id ? (
                       <button
-                        onClick={() => handleUnreport(q.citation)}
+                        onClick={() => handleUnreport(q.id)}
                         className="bg-purple-600 text-white px-3 py-1 rounded"
                       >
                         ❌ Désignaler
                       </button>
+                    ) : (
+                      <button
+                        onClick={() => handleDelete(q.id)}
+                        className="bg-red-600 text-white px-3 py-1 rounded"
+                      >
+                        🗑 Supprimer
+                      </button>
                     )}
-                    <button
-                      onClick={() => handleDelete(q.citation)}
-                      className="bg-red-600 text-white px-3 py-1 rounded"
-                    >
-                      🗑 Supprimer
-                    </button>
                   </div>
                 </>
               )}

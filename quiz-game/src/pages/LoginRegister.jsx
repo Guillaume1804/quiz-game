@@ -10,8 +10,9 @@ function generateGuestName() {
 
 export default function LoginRegister() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState("login"); // login | register
+  const [mode, setMode] = useState("login");
   const [error, setError] = useState(null);
   const { login } = useUser();
   const navigate = useNavigate();
@@ -21,10 +22,10 @@ export default function LoginRegister() {
     setError(null);
 
     try {
-      const res = await axios.post(`http://localhost:3001/api/auth/${mode}`, {
-        username,
-        password,
-      });
+      const payload =
+        mode === "register" ? { username, email, password } : { email, password };
+
+      const res = await axios.post(`http://localhost:3001/api/auth/${mode}`, payload);
       login(res.data.token);
       navigate("/");
     } catch (err) {
@@ -35,14 +36,9 @@ export default function LoginRegister() {
   const handleGuest = () => {
     const guestName = generateGuestName();
     localStorage.setItem("guestName", guestName);
-  
-    // ✅ met à jour le contexte avec un pseudo user invité (optionnel mais propre)
-    login(null); // <- si besoin, tu peux étendre cette fonction pour gérer le mode invité
-  
-    // ✅ Redirige proprement vers /quiz
+    login(null);
     navigate("/quiz");
   };
-  
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-6">
@@ -50,42 +46,56 @@ export default function LoginRegister() {
         {mode === "login" ? "Connexion" : "Inscription"}
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 w-full max-w-sm"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
+        {mode === "register" && (
+          <>
+            <input
+              type="text"
+              placeholder="Nom d'utilisateur"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="p-2 rounded text-black"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Adresse email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="p-2 rounded text-black"
+              required
+            />
+          </>
+        )}
+
+        {mode === "login" && (
+          <input
+            type="email"
+            placeholder="Adresse email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-2 rounded text-black"
+            required
+          />
+        )}
+
         <input
-          id="username"
-          name="username"
-          type="text"
-          placeholder="Nom d'utilisateur"
-          autoComplete="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="p-2 rounded text-black"
-          required
-        />
-        <input
-          id="password"
-          name="password"
           type="password"
           placeholder="Mot de passe"
-          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="p-2 rounded text-black"
           required
         />
+
         <button type="submit" className="bg-blue-500 px-4 py-2 rounded">
           {mode === "login" ? "Se connecter" : "Créer un compte"}
         </button>
-        <button
-          type="button"
-          className="bg-gray-600 px-4 py-2 rounded"
-          onClick={handleGuest}
-        >
+
+        <button type="button" className="bg-gray-600 px-4 py-2 rounded" onClick={handleGuest}>
           🎮 Jouer en tant qu'invité
         </button>
+
         <p className="text-sm text-center">
           {mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
           <button
@@ -96,9 +106,8 @@ export default function LoginRegister() {
             {mode === "login" ? "Créer un compte" : "Se connecter"}
           </button>
         </p>
-        {error && (
-          <p className="text-red-400 mt-2 text-sm text-center">{error}</p>
-        )}
+
+        {error && <p className="text-red-400 mt-2 text-sm text-center">{error}</p>}
       </form>
     </div>
   );

@@ -6,43 +6,62 @@ import { UserContext } from "./UserContext";
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded = jwtDecode(storedToken);
         console.log("✅ Token décodé :", decoded);
-        setUser(decoded);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        setUser({
+          id: decoded.id,
+          username: decoded.username,
+          role: decoded.role || "user",
+        });
+
+        setToken(storedToken);
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${storedToken}`;
       } catch (err) {
         console.error("❌ Token invalide :", err);
         localStorage.removeItem("token");
         setUser(null);
+        setToken(null);
         delete axios.defaults.headers.common["Authorization"];
       }
     }
   }, []);
 
-  const login = (token) => {
-    localStorage.setItem("token", token);
+  const login = (newToken) => {
+    localStorage.setItem("token", newToken);
     try {
-      const decoded = jwtDecode(token);
-      setUser(decoded);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const decoded = jwtDecode(newToken);
+
+      setUser({
+        id: decoded.id,
+        username: decoded.username,
+        role: decoded.role || "user",
+      });
+
+      setToken(newToken);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
     } catch (err) {
-      console.error("Erreur lors du décodage du token :", err);
+      console.error("❌ Erreur lors du décodage du token :", err);
     }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    setToken(null);
     delete axios.defaults.headers.common["Authorization"];
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, token, login, logout }}>
       {children}
     </UserContext.Provider>
   );

@@ -1,4 +1,4 @@
-// ✅ Quiz.jsx - corrigé pour les invités
+// ✅ Quiz.jsx complet avec signalement et blocage double (user + guest)
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -20,10 +20,18 @@ export default function Quiz() {
   const [mode, setMode] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [usedCitations, setUsedCitations] = useState([]);
+  const [reportedIds, setReportedIds] = useState([]); // ✅ gestion locale
+
   const navigate = useNavigate();
   const hasFetchedOnce = useRef(false);
   const inputRef = useRef(null);
-  const { user } = useUser();
+  const { user, token } = useUser();
+
+  // Charger les signalements locaux pour les invités
+  useEffect(() => {
+    const local = localStorage.getItem("reportedQuestions") || "[]";
+    setReportedIds(JSON.parse(local));
+  }, []);
 
   const fetchQuestion = useCallback(async () => {
     setLoading(true);
@@ -46,12 +54,14 @@ export default function Quiz() {
 
       setUsedCitations((prev) => [...prev, newQuestion.citation]);
       setQuestion({
-        ...newQuestion,
+        citation: newQuestion.citation,
+        id: newQuestion.id,
         choices: {
           all: shuffledAllChoices,
           two: twoChoices,
         },
       });
+
       setMode(null);
     } catch (err) {
       console.error("Erreur API question :", err);
@@ -73,26 +83,22 @@ export default function Quiz() {
 
   const endTurn = async (isCorrect) => {
     const guestName = localStorage.getItem("guestName");
-    const token = localStorage.getItem("token");
-    const username = user?.username || guestName || "invité_inconnu";
-  
+
     if (!isCorrect && lives - 1 <= 0) {
       alert(`Fin du jeu ! Score final : ${score}`);
-  
+
       try {
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const username = user?.username || guestName || "invité_inconnu";
         await axios.post(
           "http://localhost:3001/api/score",
           { score, username },
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "",
-            },
-          }
+          { headers }
         );
       } catch (err) {
         console.error("Erreur enregistrement score :", err.message);
       }
-  
+
       if (guestName) {
         localStorage.removeItem("guestName");
         navigate("/login");
@@ -104,7 +110,7 @@ export default function Quiz() {
       fetchQuestion();
     }
   };
-  
+
   const handleAnswer = async (choice, points) => {
     const isCorrect = choice.isCorrect;
     const correctAnswer = question.choices.all.find((c) => c.isCorrect)?.text;
@@ -146,14 +152,30 @@ export default function Quiz() {
   };
 
   const handleReport = async () => {
-    if (!question?.citation) return;
+    if (!question?.id || reportedIds.includes(question.id)) return;
+
     try {
-      await axios.post("http://localhost:3001/api/reportQuestion", {
-        citation: question.citation,
+      await axios.post(
+        "http://localhost:3001/api/admin/report",
+        {
+          question_id: question.id,
+          reported_by: user?.id || null,
+        },
+        token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+      );
+
+      setReportedIds((prev) => {
+        const updated = [...prev, question.id];
+        if (!user) {
+          localStorage.setItem("reportedQuestions", JSON.stringify(updated));
+        }
+        return updated;
       });
+
       alert("Merci, la question a été signalée.");
     } catch (err) {
       console.error("Erreur lors du signalement :", err);
+      alert("Erreur : Cette question est peut-être déjà signalée.");
     }
   };
 
@@ -186,9 +208,16 @@ export default function Quiz() {
 
               <button
                 onClick={handleReport}
-                className="text-sm text-red-400 underline mb-4"
+                disabled={reportedIds.includes(question.id)}
+                className={`text-sm underline mb-4 ${
+                  reportedIds.includes(question.id)
+                    ? "text-gray-500 cursor-not-allowed"
+                    : "text-red-400"
+                }`}
               >
-                Signaler cette question
+                {reportedIds.includes(question.id)
+                  ? "Déjà signalée"
+                  : "Signaler cette question"}
               </button>
 
               {!mode && (
