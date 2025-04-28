@@ -1,0 +1,51 @@
+[
+  {
+    "src": "../assets/plan2/aragorn.png",
+    "width": "180px",
+    "top": "20%",
+    "left": "5%"
+  },
+  {
+    "src": "../assets/plan2/gandalf.png",
+    "width": "100px",
+    "top": "55%",
+    "left": "15%",
+    "blurred": true
+  },
+  {
+    "src": "../assets/plan2/gimli.png",
+    "width": "80px",
+    "top": "60%",
+    "left": "25%"
+  },
+  {
+    "src": "../assets/plan2/iron-man.png",
+    "width": "95px",
+    "top": "45%",
+    "left": "35%"
+  },
+  {
+    "src": "../assets/plan2/lanfeust.png",
+    "width": "95px",
+    "top": "38%",
+    "right": "32%"
+  },
+  {
+    "src": "../assets/plan2/legolas.png",
+    "width": "90px",
+    "top": "60%",
+    "right": "25%"
+  },
+  {
+    "src": "../assets/plan2/spider-man.png",
+    "width": "100px",
+    "top": "50%",
+    "right": "15%"
+  },
+  {
+    "src": "../assets/plan2/spirit.png",
+    "width": "90px",
+    "top": "55%",
+    "right": "5%"
+  }
+]

@@ -1,0 +1,104 @@
+[
+  {
+    "src": "../assets/plan3/ariel.png",
+    "width": "60px",
+    "top": "10%",
+    "left": "5%"
+  },
+  {
+    "src": "../assets/plan3/captain.png",
+    "width": "70px",
+    "top": "15%",
+    "left": "25%"
+  },
+  {
+    "src": "../assets/plan3/cheshire.png",
+    "width": "65px",
+    "top": "20%",
+    "left": "15%"
+  },
+  {
+    "src": "../assets/plan3/cleopatra-obelix-asterix.png",
+    "width": "70px",
+    "top": "10%",
+    "left": "20%"
+  },
+  {
+    "src": "../assets/plan3/dirty-dancing.png",
+    "width": "70px",
+    "top": "15%",
+    "left": "10%"
+  },
+  {
+    "src": "../assets/plan1/Tuktirey.png",
+    "width": "60px",
+    "top": "20%",
+    "left": "30%"
+  },
+  {
+    "src": "../assets/plan3/friends.png",
+    "width": "60px",
+    "top": "10%",
+    "left": "35%"
+  },
+  {
+    "src": "../assets/plan3/hallow-jack.png",
+    "width": "70px",
+    "top": "15%",
+    "left": "36%"
+  },
+  {
+    "src": "../assets/plan3/hercules.png",
+    "width": "70px",
+    "top": "20%",
+    "right": "40%"
+  },
+  {
+    "src": "../assets/plan3/high-school-musical.png",
+    "width": "200px",
+    "top": "8%",
+    "right": "0%"
+  },
+  {
+    "src": "../assets/plan3/jack-sparrow.png",
+    "width": "300px",
+    "top": "5%",
+    "right": "22%"
+  },
+  {
+    "src": "../assets/plan3/Jake_Sully.png",
+    "width": "70px",
+    "top": "20%",
+    "right": "25%"
+  },
+  {
+    "src": "../assets/plan3/sauron.png",
+    "width": "320px",
+    "top": "4%",
+    "right": "44%",
+    "blurred": true
+  },
+  {
+    "src": "../assets/plan3/scarlet-witch.png",
+    "width": "70px",
+    "top": "15%",
+    "right": "35%"
+  },
+  {
+    "src": "../assets/plan1/kiri.png",
+    "width": "70px",
+    "top": "25%",
+    "right": "15%"
+  },
+  {
+    "src": "../assets/plan1/loak.png",
+    "width": "70px",
+    "top": "25%",
+    "right": "20%"
+  },{
+    "src": "../assets/plan1/neteyam.png",
+    "width": "70px",
+    "top": "23%",
+    "right": "30%"
+  }
+]

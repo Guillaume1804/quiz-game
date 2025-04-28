@@ -1,0 +1,26 @@
+[
+  {
+    "src": "../assets/plan1/arwen.png",
+    "width": "320px",
+    "top": "48%",
+    "left": "2%"
+  },
+  {
+    "src": "../assets/plan3/forrest-gump.png",
+    "width": "300px",
+    "top": "62%",
+    "right": "22%"
+  },
+  {
+    "src": "../assets/plan1/neytiri.png",
+    "width": "225px",
+    "bottom": "0%",
+    "right": "0%"
+  },
+  {
+    "src": "../assets/plan1/stitch.png",
+    "width": "220px",
+    "bottom": "0%",
+    "left": "30%"
+  }
+]

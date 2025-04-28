@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fade-bottom-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25%; /* hauteur du fade */
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1) 0%,    /* 0% = Totalement blanc */
+      rgba(255, 255, 255, 0.5) 50%,   /* 60% encore totalement blanc */
+      rgba(255, 255, 255, 0) 100%   /* Transition vers transparent */
+    );
+    pointer-events: none;
+  }
+  
+  
+  
+  
