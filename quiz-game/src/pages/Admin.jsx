@@ -111,10 +111,11 @@ export default function Admin() {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen py-20">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Admin - Gestion des questions</h1>
         <button
+        
           onClick={() => setFilter(filter === "all" ? "reported" : "all")}
           className="bg-yellow-500 text-white px-3 py-1 rounded"
         >

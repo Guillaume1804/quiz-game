@@ -1,6 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Geist:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+
+:root {
+  --font-title: 'Geist', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* Typo par défaut */
+body {
+  font-family: var(--font-body);
+}
+
+/* Classes personnalisées si besoin */
+.font-title {
+  font-family: var(--font-title);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
 
 .fade-bottom-overlay {
     position: absolute;
@@ -10,13 +38,11 @@
     height: 25%; /* hauteur du fade */
     background: linear-gradient(
       to top,
-      rgba(255, 255, 255, 1) 0%,    /* 0% = Totalement blanc */
-      rgba(255, 255, 255, 0.5) 50%,   /* 60% encore totalement blanc */
+      rgba(255, 255, 255, 1) 25%,    /* 0% = Totalement blanc */
+      rgba(255, 255, 255, 0.90) 35%,   /* 60% encore totalement blanc */
       rgba(255, 255, 255, 0) 100%   /* Transition vers transparent */
     );
     pointer-events: none;
   }
-  
-  
   
   

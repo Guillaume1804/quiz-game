@@ -3,10 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useUser } from "../hooks/useUser";
-
-import plan1Data from "../assets/plan1.json";
-import plan2Data from "../assets/plan2.json";
-import plan3Data from "../assets/plan3.json";
+import Carousel from "../components/Carousel";
+import carouselImages from "../data/carouselImages";
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -50,56 +48,46 @@ export default function Home() {
 
   const username = user?.username || guestName;
 
-  const renderPlan = (planData, delayStart, zIndex) =>
-    planData.map((img, index) => (
-      <div
-        key={index}
-        className="absolute"
-        style={{
-          top: img.top || undefined,
-          bottom: img.bottom || undefined,
-          left: img.left || undefined,
-          right: img.right || undefined,
-          width: img.width,
-          height: "auto",
-          pointerEvents: "none",
-          zIndex: img.zIndex || zIndex,
-          overflow: "hidden",
-          backgroundColor: "white",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: delayStart + index * 0.15 }}
-        >
-          <img
-            src={new URL(img.src, import.meta.url).href}
-            alt={`perso-${index}`}
-            className="w-full h-auto block"
-          />
-          {img.blurred && <div className="fade-bottom-overlay" />}
-        </motion.div>
-      </div>
-    ));
-
   return (
-    <div className="relative h-[calc(100vh-62px)] bg-white text-black overflow-hidden flex flex-col items-center justify-center px-4 py-8">
-      {/* Arrière-plan */}
-      <div className="absolute inset-0 pointer-events-none">
-        {renderPlan(plan1Data, 0.6, 10)}
-        {renderPlan(plan2Data, 1.2, 20)}
-        {renderPlan(plan3Data, 1.8, 30)}
+    <div className="relative h-screen text-white overflow-hidden flex flex-col items-center justify-center px-4 py-8">
+      {/* Carrousel en fond */}
+      <div className="absolute top-0 left-0 w-full h-full -z-10">
+        <Carousel images={carouselImages} />
       </div>
 
-      {/* Contenu central (titre + boutons + tableau) */}
+      {/* Overlay orangé général sous l’effet sombre */}
+      <div
+        className="absolute top-0 left-0 w-full h-full z-[-6] pointer-events-none"
+        style={{
+          backgroundColor: "rgba(255, 100, 0, 0.75)", // orange doux et large
+          mixBlendMode: "soft-light", // ou "screen" pour tester d'autres effets
+        }}
+      />
+
+      {/* Overlay sombre/orangé au-dessus du carrousel */}
+      <div
+        className="absolute top-0 left-0 w-full h-full z-[-5] pointer-events-none"
+        style={{
+          background: `
+      radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.95) 75%,
+        rgba(0, 0, 0, 1) 100%
+      )
+    `,
+        }}
+      />
+
+      {/* Contenu principal AVEC fond flouté */}
       <motion.div
-        className="z-50 flex flex-col items-center gap-6 w-full max-w-2xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
+        className="z-30 flex flex-col items-center gap-12 w-[95%] max-w-4xl backdrop-blur-md bg-white/15 rounded-xl shadow-xl py-8 px-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }} // animation rapide et fluide
       >
-        <h1 className="text-4xl md:text-5xl font-title text-center">
+        <h1 className="text-4xl md:text-4xl font-title text-center ">
           🎬 Bienvenue {username || "utilisateur"} dans le Quiz Cinéma
         </h1>
 
@@ -120,8 +108,8 @@ export default function Home() {
           )}
         </div>
 
-        {/* Classement : ne pousse pas le contenu, il s'étire par dessous */}
-        <div className="flex flex-col items-center w-full">
+        {/* Classement */}
+        <div className="flex flex-col items-center w-3/4">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-center font-title">
             🏆 Classement Top 100
           </h2>

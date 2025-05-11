@@ -1,26 +1,35 @@
 [
   {
     "src": "../assets/plan1/arwen.png",
-    "width": "320px",
-    "top": "48%",
-    "left": "2%"
-  },
-  {
-    "src": "../assets/plan3/forrest-gump.png",
-    "width": "300px",
-    "top": "62%",
-    "right": "22%"
+    "width": "240px",
+    "bottom": "0%",
+    "left": "2%",
+    "zIndex": 22
+
   },
   {
     "src": "../assets/plan1/neytiri.png",
-    "width": "225px",
+    "width": "160px",
     "bottom": "0%",
-    "right": "0%"
+    "right": "2%",
+    "zIndex": 99
   },
   {
     "src": "../assets/plan1/stitch.png",
     "width": "220px",
     "bottom": "0%",
-    "left": "30%"
+    "left": "22%"
+  },
+  {
+    "src": "../assets/plan3/forrest-gump.png",
+    "width": "350px",
+    "bottom": "5%",
+    "right": "16%"
+  },
+  {
+    "src": "../assets/plan3/high-school-musical.png",
+    "width": "450px",
+    "bottom": "0%",
+    "right": "38%"
   }
 ]
