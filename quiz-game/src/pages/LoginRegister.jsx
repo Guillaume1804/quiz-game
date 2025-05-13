@@ -48,7 +48,6 @@ export default function LoginRegister() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 font-body overflow-hidden">
-
       {/* 🎥 Vidéo de fond */}
       <video
         autoPlay
@@ -60,6 +59,9 @@ export default function LoginRegister() {
         <source src={background} type="video/mp4" />
         Votre navigateur ne supporte pas les vidéos HTML5.
       </video>
+
+      {/* Overlay sombre par-dessus la vidéo */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/60 -z-10" />
 
       {/* 🔲 Fond flouté semi-transparent pour lisibilité */}
       <div className="w-full max-w-sm bg-white/70 backdrop-blur-md rounded-lg shadow-md p-6 border border-gray-200 z-10">

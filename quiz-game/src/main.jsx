@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import App from "./App";
-import Home from "./pages/HomeCopy";
+import Home from "./pages/Home";
 import Quiz from "./pages/Quiz";
 import Admin from "./pages/Admin";
 import LoginRegister from "./pages/LoginRegister";
