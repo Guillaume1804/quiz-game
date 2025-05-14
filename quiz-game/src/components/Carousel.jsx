@@ -8,7 +8,7 @@ export default function Carousel({ images }) {
   return (
     <div className="relative overflow-hidden w-full z-[-10]" style={{ height }}>
       <motion.div
-        className="flex animate-scroll-x [animation-duration:60s] sm:[animation-duration:90s] lg:[animation-duration:120s] min-w-fit"
+        className="flex animate-scroll-x [animation-duration:90s] sm:[animation-duration:90s] lg:[animation-duration:120s] min-w-fit"
         style={{ height }}
       >
         {duplicatedImages.map((img, index) => (

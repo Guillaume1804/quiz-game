@@ -6294,10 +6294,6 @@
         "isCorrect": false
       },
       {
-        "text": "Un homme d'exception",
-        "isCorrect": false
-      },
-      {
         "text": "Seul au monde",
         "isCorrect": false
       }
@@ -51729,31 +51725,7 @@
         "isCorrect": true
       },
       {
-        "text": "Harry Potter et l'Ordre du Phénix",
-        "isCorrect": false
-      },
-      {
-        "text": "Harry Potter et le Prince de sang-mêlé",
-        "isCorrect": false
-      },
-      {
-        "text": "Harry Potter et le Prisonnier d'Azkaban",
-        "isCorrect": false
-      },
-      {
-        "text": "Harry Potter et la Chambre des secrets",
-        "isCorrect": false
-      },
-      {
-        "text": "Harry Potter et les Reliques de la mort - 1ère partie",
-        "isCorrect": false
-      },
-      {
         "text": "Harry Potter et les Reliques de la mort - 2ème partie",
-        "isCorrect": false
-      },
-      {
-        "text": "Harry Potter à l'école des sorciers",
         "isCorrect": false
       },
       {
@@ -51762,10 +51734,6 @@
       },
       {
         "text": "Charlie et la chocolaterie",
-        "isCorrect": false
-      },
-      {
-        "text": "Rio",
         "isCorrect": false
       }
     ]

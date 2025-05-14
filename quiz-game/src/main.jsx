@@ -13,6 +13,7 @@ import LoginRegister from "./pages/LoginRegister";
 import { UserProvider } from "./context/UserProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
+import { AnimatePresence } from "framer-motion";
 
 const router = createBrowserRouter([
   {
@@ -54,7 +55,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <UserProvider>
-      <RouterProvider router={router} />
+      <AnimatePresence mode="wait">
+        <RouterProvider router={router} />
+      </AnimatePresence>
     </UserProvider>
   </React.StrictMode>
 );
