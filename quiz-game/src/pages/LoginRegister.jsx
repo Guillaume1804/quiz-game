@@ -5,7 +5,6 @@ import { useUser } from "../hooks/useUser";
 import background from "../assets/7989386-hd_2048_1080_25fps.mp4"; // vidéo locale
 import PageWrapper from "../components/PageWrapper";
 
-
 function generateGuestName() {
   const id = Math.floor(1000 + Math.random() * 9000);
   return `invité_${id}`;
@@ -18,6 +17,8 @@ export default function LoginRegister() {
   const [mode, setMode] = useState("login");
   const [error, setError] = useState(null);
   const { login } = useUser();
+  const [rememberMe, setRememberMe] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,7 +35,7 @@ export default function LoginRegister() {
         `http://localhost:3001/api/auth/${mode}`,
         payload
       );
-      login(res.data.token);
+      login(res.data.token, rememberMe, true); // ✅ Nouveau avec "silent"
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Erreur inconnue");
@@ -93,7 +94,6 @@ export default function LoginRegister() {
                 />
               </>
             )}
-
             {mode === "login" && (
               <input
                 type="email"
@@ -104,7 +104,6 @@ export default function LoginRegister() {
                 required
               />
             )}
-
             <input
               type="password"
               placeholder="Mot de passe"
@@ -113,14 +112,12 @@ export default function LoginRegister() {
               className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-
             <button
               type="submit"
               className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold"
             >
               {mode === "login" ? "Se connecter" : "Créer un compte"}
             </button>
-
             <button
               type="button"
               onClick={handleGuest}
@@ -128,7 +125,6 @@ export default function LoginRegister() {
             >
               🎮 Jouer en tant qu'invité
             </button>
-
             <p className="text-sm text-center text-gray-600">
               {mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
               <button
@@ -139,7 +135,14 @@ export default function LoginRegister() {
                 {mode === "login" ? "Créer un compte" : "Se connecter"}
               </button>
             </p>
-
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              Se souvenir de moi
+            </label>
             {error && (
               <p className="text-red-500 text-sm text-center mt-2">{error}</p>
             )}

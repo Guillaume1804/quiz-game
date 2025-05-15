@@ -14,6 +14,8 @@ import { UserProvider } from "./context/UserProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 import { AnimatePresence } from "framer-motion";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +60,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <AnimatePresence mode="wait">
         <RouterProvider router={router} />
       </AnimatePresence>
+      <ToastContainer position="top-right" autoClose={4000} theme="dark" />
     </UserProvider>
   </React.StrictMode>
 );
+

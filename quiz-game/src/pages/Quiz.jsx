@@ -146,7 +146,7 @@ export default function Quiz() {
     if (isCorrect) {
       const points = 5 + combo;
       setScore((prev) => prev + points);
-      setFeedback("✅ Bonne réponse !");
+      setFeedback("Bonne réponse !");
       setCombo((prev) => prev + 1);
       setTimeout(() => endTurn(), 2000);
     } else {
@@ -155,7 +155,7 @@ export default function Quiz() {
       setLives(newLives);
       setFeedback({
         type: "error",
-        message: `❌ Mauvaise réponse ! Le bon film était : ${correctAnswer}`,
+        message: `Mauvaise réponse ! Le bon film était : ${correctAnswer}`,
       });
 
       if (newLives <= 0) {
@@ -413,7 +413,7 @@ export default function Quiz() {
                         transition={{ duration: 0.4 }}
                         className="flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-full shadow-lg text-lg font-semibold"
                       >
-                        ✅ {feedback}
+                        {feedback}
                       </motion.div>
                     )}
 
