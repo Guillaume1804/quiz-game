@@ -45,3 +45,20 @@ body {
   );
   pointer-events: none;
 }
+
+.blur-fade {
+  mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 45%,
+    rgba(0, 0, 0, 0.5) 70%,
+    rgba(0, 0, 0, 0.15) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 45%,
+    rgba(0, 0, 0, 0.5) 70%,
+    rgba(0, 0, 0, 0.15) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}

@@ -71,7 +71,7 @@ export default function Home() {
 
         {/* ✅ Contenu principal */}
         <motion.div
-          className="z-30 w-full max-w-4xl bg-white/15 backdrop-blur-sm rounded-xl shadow-xl px-4 py-8 sm:p-10 md:p-12 flex flex-col items-center gap-10 mt-20 sm:mt-0"
+          className="z-30 w-full max-w-4xl bg-white/15 backdrop-blur-sm rounded-xl shadow-xl px-4 py-8 sm:p-10 md:p-12 flex flex-col items-center gap-10 mt-20 sm:mt-0 blur-fade"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
