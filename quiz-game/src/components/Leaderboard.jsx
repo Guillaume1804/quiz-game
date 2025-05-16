@@ -34,7 +34,7 @@ export default function Leaderboard({ scores }) {
               initial={{ y: 50, scale: 0.8, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 * i, duration: 0.5 }}
-              className="flex flex-col items-center justify-end bg-gradient-to-t from-yellow-100 to-yellow-300 shadow-md rounded-t-lg w-20 sm:w-24 text-center px-2 py-3"
+              className="flex flex-col items-center justify-center bg-gradient-to-t from-yellow-100 to-yellow-300 shadow-md rounded-t-lg text-gray-500 w-20 sm:w-24 text-center px-2 py-3"
               style={{ height }}
             >
               <div className="text-xl sm:text-2xl">{rank}</div>

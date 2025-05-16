@@ -29,6 +29,8 @@ export default function Quiz() {
   const [combo, setCombo] = useState(0);
   const [showNextButton, setShowNextButton] = useState(false);
   const [questionKey, setQuestionKey] = useState(0);
+  const responseRef = useRef(null);
+  const [finalScore, setFinalScore] = useState(0);
 
   const navigate = useNavigate();
   const hasFetchedOnce = useRef(false);
@@ -73,6 +75,7 @@ export default function Quiz() {
     }
     setLoading(false);
   }, [usedCitations]);
+
   useEffect(() => {
     const guestName = localStorage.getItem("guestName");
     if (!user && !guestName) {
@@ -89,7 +92,7 @@ export default function Quiz() {
     const guestName = localStorage.getItem("guestName");
 
     if (updatedLives <= 0) {
-      setFeedback(`🎉 Fin du jeu ! Ton score final est de ${score} points.`);
+      setFinalScore(score);
       setMode("end");
 
       try {
@@ -190,271 +193,364 @@ export default function Quiz() {
     }
   };
 
+  function AnimatedNumber({ value }) {
+  const [displayedValue, setDisplayedValue] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 2500; // durée totale souhaitée de l'animation en ms
+    const frameDuration = 40; // temps entre chaque "frame"
+    const totalSteps = Math.ceil(duration / frameDuration);
+    const step = Math.ceil(value / totalSteps);
+
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= value) {
+        setDisplayedValue(value);
+        clearInterval(interval);
+      } else {
+        setDisplayedValue(start);
+      }
+    }, frameDuration);
+
+    return () => clearInterval(interval);
+  }, [value]);
+
+  return (
+    <span className="text-yellow-400 font-bold">
+      {displayedValue}
+    </span>
+  );
+}
+
+
   useEffect(() => {
     if (mode === "free" && inputRef.current) inputRef.current.focus();
   }, [mode]);
 
+  useEffect(() => {
+    if (mode && responseRef.current) {
+      responseRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [mode]);
+
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.15,
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    }),
+  };
+
   return (
-  <PageWrapper>
-    <div className="relative min-h-screen text-gray-200 font-body overflow-hidden">
-      {mode === "end" && <Fireworks />}
+    <PageWrapper>
+      <div className="relative min-h-screen text-gray-200 font-body overflow-hidden">
+        {mode === "end" && <Fireworks />}
+        <div
+          className="absolute top-0 left-0 w-full h-full -z-10"
+          style={{
+            backgroundImage: `url(${Spotlight})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
 
-      <div
-        className="absolute top-0 left-0 w-full h-full -z-10"
-        style={{
-          backgroundImage: `url(${Spotlight})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+        <div className="relative px-4 py-8 pt-28 sm:pt-24 flex flex-col items-center justify-center gap-4 min-h-screen">
+          {mode !== "end" && (
+            <div className="flex flex-row gap-16">
+              <Score value={score} combo={combo} />
+              <Lives count={lives} />
+            </div>
+          )}
 
-      <div className="relative px-4 py-8 flex flex-col items-center justify-center gap-4 min-h-screen">
-        <div className="flex flex-row gap-16">
-          <Score value={score} combo={combo} />
-          <Lives count={lives} />
-        </div>
-
-        {loading ? (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-lg text-gray-200 font-medium"
-          >
-            Chargement de la question...
-          </motion.p>
-        ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={questionKey}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="w-full flex flex-col items-center gap-6"
+          {loading ? (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-lg text-gray-200 font-medium"
             >
-              {mode === "end" && feedback ? (
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-gradient-to-br from-purple-800 to-black text-white text-center rounded-xl p-8 shadow-xl max-w-md w-full"
-                >
-                  <h2 className="text-3xl font-bold mb-4">🎉 Fin du jeu !</h2>
-                  <p className="text-xl font-semibold mb-6">
-                    Ton score final est de{" "}
-                    <span className="text-yellow-400">{score} points</span>.
-                  </p>
-                  <button
-                    onClick={() => {
-                      const guestName = localStorage.getItem("guestName");
-                      if (guestName) {
-                        localStorage.removeItem("guestName");
-                        navigate("/login");
-                      } else {
-                        navigate("/");
-                      }
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white transition"
+              Chargement de la question...
+            </motion.p>
+          ) : (
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={questionKey}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="w-full flex flex-col items-center gap-6"
+              >
+                {mode === "end" ? (
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-gradient-to-br from-purple-800 to-black text-white text-center rounded-xl p-8 shadow-xl max-w-md w-full"
                   >
-                    Retour à l'accueil
-                  </button>
-                </motion.div>
-              ) : (
-                <>
-                  {/* Citation + signalement */}
-                  {!feedback && !reportedMessage && (
-                    <>
-                      <p className="text-xl font-semibold text-center max-w-2xl">
-                        “{question?.citation}”
-                      </p>
+                    <h2 className="text-3xl font-bold mb-4">🎉 Fin du jeu !</h2>
+                    <motion.p
+                      className="text-xl font-semibold mb-6"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      Ton score final est de{" "}
+                      <AnimatedNumber key={finalScore} value={finalScore} />
+                      {" "}points.
+                    </motion.p>
 
-                      <button
-                        onClick={handleReport}
-                        disabled={reportedIds.includes(question.id)}
-                        className={`text-sm underline ${
-                          reportedIds.includes(question.id)
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-red-500 hover:text-red-600"
-                        }`}
-                      >
-                        {reportedIds.includes(question.id)
-                          ? "Déjà signalée"
-                          : "Signaler cette question"}
-                      </button>
-                    </>
-                  )}
-
-                  {/* Message après signalement */}
-                  <AnimatePresence mode="wait">
-                    {reportedMessage && (
-                      <motion.div
-                        key="reportMessage"
-                        initial={{ rotateY: 90, opacity: 0 }}
-                        animate={{ rotateY: 0, opacity: 1 }}
-                        exit={{ rotateY: -90, opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="flex flex-col items-center gap-4 mt-6 text-center bg-green-100/10 p-4 rounded shadow-lg max-w-lg"
-                      >
-                        <p className="text-lg text-green-400 font-semibold">
-                          {reportedMessage}
+                    <button
+                      onClick={() => {
+                        const guestName = localStorage.getItem("guestName");
+                        if (guestName) {
+                          localStorage.removeItem("guestName");
+                          navigate("/login");
+                        } else {
+                          navigate("/");
+                        }
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white transition"
+                    >
+                      Retour à l'accueil
+                    </button>
+                  </motion.div>
+                ) : (
+                  <>
+                    {/* Citation + signalement */}
+                    {!feedback && !reportedMessage && (
+                      <>
+                        <p className="text-xl font-semibold text-center max-w-2xl">
+                          “{question?.citation}”
                         </p>
+
                         <button
-                          onClick={() => {
-                            setReportedMessage(null);
-                            fetchQuestion();
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition"
+                          onClick={handleReport}
+                          disabled={reportedIds.includes(question.id)}
+                          className={`text-sm underline ${
+                            reportedIds.includes(question.id)
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-red-500 hover:text-red-600"
+                          }`}
                         >
-                          👉 Passer à la question suivante
+                          {reportedIds.includes(question.id)
+                            ? "Déjà signalée"
+                            : "Signaler cette question"}
                         </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Mode de réponse */}
-                  {!feedback && !reportedMessage && !mode && (
-                    <div className="flex flex-col items-center gap-3 mt-6">
-                      <h2 className="text-lg font-semibold font-title">
-                        Choisis ton mode de réponse :
-                      </h2>
-                      <button
-                        onClick={() => setMode("2")}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                      >
-                        2 choix (1 point)
-                      </button>
-                      <button
-                        onClick={() => setMode("4")}
-                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                      >
-                        4 choix (3 points)
-                      </button>
-                      <button
-                        onClick={() => setMode("free")}
-                        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-                      >
-                        Réponse libre (5 points)
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Composants QuestionBox / Input */}
-                  <AnimatePresence mode="wait">
-                    {!feedback && !reportedMessage && mode === "2" && (
-                      <motion.div
-                        key="mode2"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <QuestionBox
-                          choices={question.choices.two}
-                          onAnswer={(c) => handleAnswer(c, 1)}
-                        />
-                      </motion.div>
+                      </>
                     )}
 
-                    {!feedback && !reportedMessage && mode === "4" && (
-                      <motion.div
-                        key="mode4"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <QuestionBox
-                          choices={question.choices.all}
-                          onAnswer={(c) => handleAnswer(c, 3)}
-                        />
-                      </motion.div>
-                    )}
-
-                    {!feedback && !reportedMessage && mode === "free" && (
-                      <motion.div
-                        key="modeFree"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col gap-2 items-center mt-4"
-                      >
-                        <input
-                          ref={inputRef}
-                          type="text"
-                          placeholder="Tape ta réponse ici..."
-                          className="p-2 w-full max-w-md rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              const input = inputRef.current.value.trim();
-                              if (input) {
-                                handleFreeAnswer(input);
-                                inputRef.current.value = "";
-                              }
-                            }
-                          }}
-                        />
-                        <p className="text-sm text-gray-500">
-                          Appuie sur <strong>Entrée</strong> pour valider
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Feedback bonne ou mauvaise réponse */}
-                  {feedback &&
-                    typeof feedback === "string" &&
-                    mode !== "end" && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.4 }}
-                        className="flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-full shadow-lg text-lg font-semibold"
-                      >
-                        {feedback}
-                      </motion.div>
-                    )}
-
-                  {feedback &&
-                    typeof feedback === "object" &&
-                    feedback.type === "error" && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="px-6 py-4 bg-red-600 text-white rounded-xl shadow-lg text-center max-w-xl w-full"
-                      >
-                        <p className="font-semibold text-lg">
-                          ❌ Mauvaise réponse ! Le bon film était : <br />
-                          <span className="italic text-yellow-300">
-                            {feedback.message.split(":")[1]?.trim()}
-                          </span>
-                        </p>
-                        <p className="text-sm mt-2 text-white/80">
-                          {lives > 0
-                            ? "Essaie la prochaine !"
-                            : "Fin du jeu dans 5 secondes..."}
-                        </p>
-                        {showNextButton && (
+                    {/* Message après signalement */}
+                    <AnimatePresence mode="wait">
+                      {reportedMessage && (
+                        <motion.div
+                          key="reportMessage"
+                          initial={{ rotateY: 90, opacity: 0 }}
+                          animate={{ rotateY: 0, opacity: 1 }}
+                          exit={{ rotateY: -90, opacity: 0 }}
+                          transition={{ duration: 0.6 }}
+                          className="flex flex-col items-center gap-4 mt-6 text-center bg-green-100/10 p-4 rounded shadow-lg max-w-lg"
+                        >
+                          <p className="text-lg text-green-400 font-semibold">
+                            {reportedMessage}
+                          </p>
                           <button
-                            onClick={() => endTurn()}
-                            className="mt-4 bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white transition"
+                            onClick={() => {
+                              setReportedMessage(null);
+                              fetchQuestion();
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition"
                           >
-                            Question suivante
+                            👉 Passer à la question suivante
                           </button>
-                        )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Mode de réponse */}
+                    {!feedback && !reportedMessage && !mode && (
+                      <motion.div
+                        ref={responseRef}
+                        className="flex flex-col items-center gap-3 mt-6"
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                          hidden: {},
+                          visible: {},
+                        }}
+                      >
+                        <h2 className="text-lg font-semibold font-title">
+                          Choisis ton mode de réponse :
+                        </h2>
+
+                        <motion.button
+                          custom={0}
+                          variants={buttonVariants}
+                          initial="hidden"
+                          animate="visible"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setMode("2")}
+                          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        >
+                          2 choix (1 point)
+                        </motion.button>
+
+                        <motion.button
+                          custom={1}
+                          variants={buttonVariants}
+                          initial="hidden"
+                          animate="visible"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setMode("4")}
+                          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                        >
+                          4 choix (3 points)
+                        </motion.button>
+
+                        <motion.button
+                          custom={2}
+                          variants={buttonVariants}
+                          initial="hidden"
+                          animate="visible"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setMode("free")}
+                          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+                        >
+                          Réponse libre (5 points)
+                        </motion.button>
                       </motion.div>
                     )}
-                </>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        )}
-      </div>
-    </div>
-  </PageWrapper>
-);
 
+                    {/* Composants QuestionBox / Input */}
+                    <AnimatePresence mode="wait">
+                      {!feedback && !reportedMessage && mode === "2" && (
+                        <motion.div
+                          key="mode2"
+                          ref={responseRef}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <QuestionBox
+                            choices={question.choices.two}
+                            onAnswer={(c) => handleAnswer(c, 1)}
+                          />
+                        </motion.div>
+                      )}
+
+                      {!feedback && !reportedMessage && mode === "4" && (
+                        <motion.div
+                          key="mode4"
+                          ref={responseRef}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <QuestionBox
+                            choices={question.choices.all}
+                            onAnswer={(c) => handleAnswer(c, 3)}
+                          />
+                        </motion.div>
+                      )}
+
+                      {!feedback && !reportedMessage && mode === "free" && (
+                        <motion.div
+                          key="modeFree"
+                          ref={responseRef}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                          className="flex flex-col gap-2 items-center mt-4"
+                        >
+                          <input
+                            ref={inputRef}
+                            type="text"
+                            placeholder="Tape ta réponse ici..."
+                            className="p-2 w-full max-w-md rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const input = inputRef.current.value.trim();
+                                if (input) {
+                                  handleFreeAnswer(input);
+                                  inputRef.current.value = "";
+                                }
+                              }
+                            }}
+                          />
+                          <p className="text-sm text-gray-500">
+                            Appuie sur <strong>Entrée</strong> pour valider
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Feedback bonne ou mauvaise réponse */}
+                    {feedback &&
+                      typeof feedback === "string" &&
+                      mode !== "end" && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          transition={{ duration: 0.4 }}
+                          className="flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-full shadow-lg text-lg font-semibold"
+                        >
+                          {feedback}
+                        </motion.div>
+                      )}
+
+                    {feedback &&
+                      typeof feedback === "object" &&
+                      feedback.type === "error" && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="px-6 py-4 bg-red-600 text-white rounded-xl shadow-lg text-center max-w-xl w-full"
+                        >
+                          <p className="font-semibold text-lg">
+                            ❌ Mauvaise réponse ! Le bon film était : <br />
+                            <span className="italic text-yellow-300">
+                              {feedback.message.split(":")[1]?.trim()}
+                            </span>
+                          </p>
+                          <p className="text-sm mt-2 text-white/80">
+                            {lives > 0
+                              ? "Essaie la prochaine !"
+                              : "Fin du jeu dans 5 secondes..."}
+                          </p>
+                          {showNextButton && (
+                            <button
+                              onClick={() => endTurn()}
+                              className="mt-4 bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white transition"
+                            >
+                              Question suivante
+                            </button>
+                          )}
+                        </motion.div>
+                      )}
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          )}
+        </div>
+      </div>
+    </PageWrapper>
+  );
 }
