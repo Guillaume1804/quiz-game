@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const FILE_PATH = path.join(__dirname, "../data", "cleanedQuestions.json");
-const TEMP_PATH = path.join(__dirname, "../data", "cleanedQuestions_temp.json");
+const FILE_PATH = path.join(__dirname, "../data", "generatedQuestions.json");
+const TEMP_PATH = path.join(__dirname, "../data", "generatedQuestions_temp.json");
 
 if (!fs.existsSync(FILE_PATH)) {
   console.error("❌ Fichier introuvable :", FILE_PATH);

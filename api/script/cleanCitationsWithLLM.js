@@ -4,7 +4,7 @@ const path = require("path");
 const axios = require("axios");
 
 const INPUT_PATH = path.join(__dirname, "data", "generatedQuestions.json");
-const OUTPUT_PATH = path.join(__dirname, "data", "cleanedQuestions.json");
+const OUTPUT_PATH = path.join(__dirname, "data", "generatedQuestions.json");
 
 const LM_API_URL = "http://127.0.0.1:1234/v1/chat/completions"; // LM Studio
 

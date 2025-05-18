@@ -19,7 +19,7 @@ app.use("/api/score", scoreRoutes);
 app.use("/api/admin", adminRoutes);
 
 // GET /api/question → question aléatoire depuis fichier local
-const QUESTIONS_PATH = path.join(__dirname, "data", "cleanedQuestions.json");
+const QUESTIONS_PATH = path.join(__dirname, "data", "generatedQuestions.json");
 
 function load(file) {
   if (!fs.existsSync(file)) return [];

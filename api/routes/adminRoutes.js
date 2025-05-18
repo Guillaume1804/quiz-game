@@ -4,7 +4,7 @@ const supabase = require("../config/supabaseClient");
 const path = require("path");
 const fs = require("fs");
 
-const CLEANED_PATH = path.join(__dirname, "../data/cleanedQuestions.json");
+const CLEANED_PATH = path.join(__dirname, "../data/generatedQuestions.json");
 
 function load(file) {
   if (!fs.existsSync(file)) return [];
