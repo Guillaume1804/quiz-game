@@ -15,7 +15,6 @@ node_modules/
 /data/users.json
 /data/scores.json
 /data/reportedQuestions.json
-/data/generatedQuestions.json
 /data/pendingQuestions.json
 
 # OS / IDE
