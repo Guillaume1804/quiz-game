@@ -35,5 +35,5 @@ app.get("/api/question", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ API en ligne sur http://localhost:${PORT}`);
+  console.log(`✅ API en ligne sur ${PORT}`);
 });
