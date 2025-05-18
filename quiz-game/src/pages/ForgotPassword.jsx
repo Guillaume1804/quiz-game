@@ -13,15 +13,17 @@ export default function ForgotPassword() {
     e.preventDefault();
     setMessage(null);
     setError(null);
-    setSubmitted(true); // 🔒 désactive le bouton dès le clic
+    setSubmitted(true);
+
+    // 🔁 Réactive le bouton après 30 secondes dans tous les cas
+    setTimeout(() => setSubmitted(false), 30000);
 
     try {
       await axios.post(`${API_BASE}/api/auth/request-reset`, { email });
       setMessage("Un lien de réinitialisation a été envoyé si l'email existe.");
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setError("Une erreur est survenue. Réessaie plus tard.");
-      setTimeout(() => setSubmitted(false), 30000); // réactive le bouton au bout de 30 sec
     }
   };
 
@@ -43,7 +45,9 @@ export default function ForgotPassword() {
               type="submit"
               disabled={submitted} // ✅ bloqué après clic
               className={`p-2 rounded font-semibold text-white transition ${
-                submitted ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                submitted
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
               {submitted ? "Lien envoyé" : "Envoyer le lien"}
