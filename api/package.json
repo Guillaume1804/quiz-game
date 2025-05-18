@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,6 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "fast-levenshtein": "^3.0.0",
-    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "openai": "^4.92.0"
   }
