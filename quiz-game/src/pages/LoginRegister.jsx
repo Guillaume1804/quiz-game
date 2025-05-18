@@ -16,6 +16,7 @@ export default function LoginRegister() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [mode, setMode] = useState("login");
   const [error, setError] = useState(null);
   const { login } = useUser();
@@ -27,6 +28,11 @@ export default function LoginRegister() {
     e.preventDefault();
     setError(null);
 
+    if (mode === "register" && password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    
     try {
       const payload =
         mode === "register"
@@ -109,6 +115,13 @@ export default function LoginRegister() {
               placeholder="Mot de passe"
               showStrength={mode === "register"} // uniquement lors de l’inscription
             />
+            {mode === "register" && (
+              <PasswordInput
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                placeholder="Confirmer le mot de passe"
+              />
+            )}
 
             {mode === "login" && (
               <div className="text-right">
