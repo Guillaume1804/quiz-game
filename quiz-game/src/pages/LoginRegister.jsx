@@ -4,6 +4,7 @@ import axios from "axios";
 import { useUser } from "../hooks/useUser";
 import background from "../assets/7989386-hd_2048_1080_25fps.mp4"; // vidéo locale
 import PageWrapper from "../components/PageWrapper";
+import PasswordInput from "../components/PasswordInput";
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function generateGuestName() {
@@ -102,14 +103,13 @@ export default function LoginRegister() {
                 required
               />
             )}
-            <input
-              type="password"
-              placeholder="Mot de passe"
+            <PasswordInput
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              onChange={setPassword}
+              placeholder="Mot de passe"
+              showStrength={mode === "register"} // uniquement lors de l’inscription
             />
+
             {mode === "login" && (
               <div className="text-right">
                 <button

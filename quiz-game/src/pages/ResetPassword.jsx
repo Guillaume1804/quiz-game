@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import background from "../assets/7989386-hd_2048_1080_25fps.mp4";
 import PageWrapper from "../components/PageWrapper";
+import PasswordInput from "../components/PasswordInput";
 import { toast } from "react-toastify";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -14,6 +15,8 @@ export default function ResetPassword() {
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // Récupération du token dans l'URL
   useEffect(() => {
@@ -30,6 +33,12 @@ export default function ResetPassword() {
     setError(null);
     setLoading(true);
 
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await axios.post(`${API_BASE}/api/auth/reset-password`, {
         token,
@@ -41,6 +50,7 @@ export default function ResetPassword() {
         setTimeout(() => {
           navigate("/login");
         }, 2000);
+        return;
       }
     } catch (err) {
       setError(
@@ -73,14 +83,19 @@ export default function ResetPassword() {
           </h1>
 
           <form onSubmit={handleReset} className="flex flex-col gap-4">
-            <input
-              type="password"
-              placeholder="Nouveau mot de passe"
+            <PasswordInput
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              onChange={setPassword}
+              placeholder="Nouveau mot de passe"
+              showStrength={true}
             />
+
+            <PasswordInput
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              placeholder="Confirmer le mot de passe"
+            />
+
             <button
               type="submit"
               disabled={loading}
@@ -90,6 +105,7 @@ export default function ResetPassword() {
             >
               {loading ? "Réinitialisation..." : "Réinitialiser"}
             </button>
+
             {error && (
               <p className="text-red-500 text-sm text-center mt-2">{error}</p>
             )}
