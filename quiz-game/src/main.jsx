@@ -16,6 +16,8 @@ import "./index.css";
 import { AnimatePresence } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginRegister />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
       },
       {
         path: "quiz",
@@ -64,4 +74,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </UserProvider>
   </React.StrictMode>
 );
-

@@ -20,7 +20,6 @@ export default function LoginRegister() {
   const { login } = useUser();
   const [rememberMe, setRememberMe] = useState(false);
 
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -33,10 +32,7 @@ export default function LoginRegister() {
           ? { username, email, password }
           : { email, password };
 
-      const res = await axios.post(
-        `${API_BASE}/api/auth/${mode}`,
-        payload
-      );
+      const res = await axios.post(`${API_BASE}/api/auth/${mode}`, payload);
       login(res.data.token, rememberMe, true); // ✅ Nouveau avec "silent"
       navigate("/");
     } catch (err) {
@@ -114,6 +110,17 @@ export default function LoginRegister() {
               className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            {mode === "login" && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-sm text-blue-600 hover:underline hover:text-blue-700 transition"
+                >
+                  🔑 Mot de passe oublié ?
+                </button>
+              </div>
+            )}
             <button
               type="submit"
               className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold"
