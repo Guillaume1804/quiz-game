@@ -81,7 +81,8 @@ router.post("/request-reset", async (req, res) => {
   }
 
   const token = crypto.randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 30);
+  console.log("⏱ Expire à (locale):", expiresAt.toLocaleString());
 
   const { error: insertError } = await supabase
     .from("password_reset_tokens")
