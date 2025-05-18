@@ -13,6 +13,8 @@ export default function AddQuestionForm({ onQuestionAdded }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const { token } = useUser();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ export default function AddQuestionForm({ onQuestionAdded }) {
 
     try {
       await axios.post(
-        "http://localhost:3001/api/admin/addQuestion",
+        `${API_BASE}/api/admin/addQuestion`,
         { citation, choices },
         { headers: { Authorization: `Bearer ${token}` } }
       );

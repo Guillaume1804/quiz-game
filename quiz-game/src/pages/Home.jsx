@@ -7,6 +7,8 @@ import Carousel from "../components/Carousel";
 import carouselImages from "../data/carouselImages";
 import Leaderboard from "../components/Leaderboard";
 import PageWrapper from "../components/PageWrapper";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -24,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchScores() {
       try {
-        const res = await fetch("http://localhost:3001/api/score");
+        const res = await fetch(`${API_BASE}/api/score`);
         const data = await res.json();
         setLeaderboard(data);
       } catch (err) {

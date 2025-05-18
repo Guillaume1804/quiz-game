@@ -3,6 +3,7 @@ import axios from "axios";
 import AddQuestionForm from "../components/AddQuestionForm";
 import { useUser } from "../hooks/useUser";
 import PageWrapper from "../components/PageWrapper";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Admin() {
   const [questions, setQuestions] = useState(null);
@@ -17,8 +18,8 @@ export default function Admin() {
     try {
       const url =
         filter === "reported"
-          ? "http://localhost:3001/api/admin/reported"
-          : "http://localhost:3001/api/admin/questions";
+          ? `${API_BASE}/api/admin/reported`
+          : `${API_BASE}/api/admin/questions`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -38,7 +39,7 @@ export default function Admin() {
   const handleDelete = async (id) => {
     if (!window.confirm("Supprimer cette question ?")) return;
     try {
-      await axios.delete("http://localhost:3001/api/admin/deleteQuestion", {
+      await axios.delete(`${API_BASE}/api/admin/deleteQuestion`, {
         data: { id },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -51,7 +52,7 @@ export default function Admin() {
   const handleUnreport = async (question_id) => {
     try {
       await axios.post(
-        "http://localhost:3001/api/admin/unreport",
+        `${API_BASE}/api/admin/unreport`,
         { question_id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -79,7 +80,7 @@ export default function Admin() {
   const handleUpdate = async () => {
     try {
       await axios.put(
-        "http://localhost:3001/api/admin/updateQuestion",
+        `${API_BASE}/api/admin/updateQuestion`,
         {
           id: questions[editIndex].id,
           citation: editData.citation,

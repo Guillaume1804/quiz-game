@@ -11,6 +11,7 @@ import Fireworks from "../components/Fireworks";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "../components/PageWrapper";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function shuffleArray(array) {
   return [...array].sort(() => Math.random() - 0.5);
@@ -32,6 +33,7 @@ export default function Quiz() {
   const responseRef = useRef(null);
   const [finalScore, setFinalScore] = useState(0);
 
+
   const navigate = useNavigate();
   const hasFetchedOnce = useRef(false);
   const inputRef = useRef(null);
@@ -45,7 +47,7 @@ export default function Quiz() {
   const fetchQuestion = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3001/api/question");
+      const res = await axios.get(`${API_BASE}/api/question`);
       const newQuestion = res.data;
 
       if (usedCitations.includes(newQuestion.citation)) {
@@ -99,7 +101,7 @@ export default function Quiz() {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const username = user?.username || guestName || "invité_inconnu";
         await axios.post(
-          "http://localhost:3001/api/score",
+          `${API_BASE}/api/score`,
           { score, username },
           { headers }
         );
@@ -174,7 +176,7 @@ export default function Quiz() {
 
     try {
       await axios.post(
-        "http://localhost:3001/api/admin/report",
+        `${API_BASE}/api/admin/report`,
         { question_id: question.id, reported_by: user?.id || null },
         token ? { headers: { Authorization: `Bearer ${token}` } } : {}
       );

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useUser } from "../hooks/useUser";
 import background from "../assets/7989386-hd_2048_1080_25fps.mp4"; // vidéo locale
 import PageWrapper from "../components/PageWrapper";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function generateGuestName() {
   const id = Math.floor(1000 + Math.random() * 9000);
@@ -19,6 +20,7 @@ export default function LoginRegister() {
   const { login } = useUser();
   const [rememberMe, setRememberMe] = useState(false);
 
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -32,7 +34,7 @@ export default function LoginRegister() {
           : { email, password };
 
       const res = await axios.post(
-        `http://localhost:3001/api/auth/${mode}`,
+        `${API_BASE}/api/auth/${mode}`,
         payload
       );
       login(res.data.token, rememberMe, true); // ✅ Nouveau avec "silent"
